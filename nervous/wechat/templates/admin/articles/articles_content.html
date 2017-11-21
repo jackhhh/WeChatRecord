@@ -1,0 +1,28 @@
+{% extends 'common/sortable_content.html' %}
+
+{% block no-data-info %}
+    暂无文章
+{% endblock no-data-info %}
+
+{% block content %}
+    {% for article in items %}
+        <tr>
+            <td><a class="ajax-link" data-url="{% url 'admin/detail' article.official_account_id %}">
+                {{ article.official_account_name }}
+            </a></td>
+            <td><a target="_blank" href="{{ article.url }}">
+                <div>{{ article.title|truncatechars:100 }}</div>
+            </a></td>
+            <td>{{ article.description|linebreaksbr|truncatechars:150 }}</td>
+            <td align="right">
+                {% if article.views != 100001 %}
+                    {{ article.views }}
+                {% else %}
+                    100000+
+                {% endif %}
+            </td>
+            <td align="right">{{ article.likes }}</td>
+            <td align="right">{{ article.posttime|date:"Y年m月d日" }}</td>
+        </tr>
+    {% endfor %}
+{% endblock content %}

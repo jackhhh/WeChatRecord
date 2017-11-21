@@ -1,0 +1,196 @@
+{% load model_extras %}
+
+<div class="top-row">
+    <a>&nbsp</a>
+    <a class="fake-link pull-right">
+        <strong>信息概览　<i class="fa fa-dashboard fa-fw"></i></strong>
+    </a>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>待审批申请<span class="badge pull-right">{{ pending_applications|length }}</span></h4></div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width: 15%; min-width: 150px">公众号名称</th>
+                            <th style="width: 15%; min-width: 110px">公众号负责人</th>
+                            <th style="width: 10000px">公众号简介</th>
+                            <th>
+                                <div style="width: 55px"></div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if pending_applications %}
+                            {% for app in pending_applications %}
+                                <tr>
+                                    <td>{{ app.name }}</td>
+                                    <td>{{ app.manager_name }}</td>
+                                    <td>{{ app.description|linebreaksbr|truncatechars:100 }}</td>
+                                    <td>
+                                        <a class="fake-link"
+                                           href="javascript:showModal('{% url 'modals/admin/process-application-modal' app.id %}', 'application-modal')">
+                                            <span class="fa fa-check-square-o fa-fw"></span> 审批
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="10000" style="text-align: center">无待审批申请</td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if show_all_pending_applications %}
+                    <hr style="margin-top: 0">
+                    <ul class="list-inline pull-right">
+                        <li><a class="ajax-link" data-url="{% url 'admin/applications' 'pending' %}">
+                            <span class="fa fa-ellipsis-h fa-fw"></span> 查看所有
+                        </a></li>
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>最近一周的热门文章</h4>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="width: 15%; min-width: 100px">公众号名称</th>
+                            <th style="width: 25%; min-width: 100px; max-width: 200px;">文章标题</th>
+                            <th style="max-width: 500px;">文章简介</th>
+                            <th style="width: 85px"><span class="fa fa-eye fa-fw"></span> 阅览数</th>
+                            <th style="width: 85px"><span class="fa fa-thumbs-o-up fa-fw"></span> 点赞数</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if articles %}
+                            {% for article in articles %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td><a class="ajax-link"
+                                           data-url="{% url 'admin/detail' article.official_account_id %}">
+                                        {{ article.official_account_name }}
+                                    </a></td>
+                                    <td>
+                                        <a target="_blank" href="{{ article.url }}">
+                                            <div>{{ article.title|truncatechars:100 }}</div>
+                                        </a>
+                                    </td>
+                                    <td>{{ article.description|linebreaksbr|truncatechars:150 }}</td>
+                                    <td align="right">
+                                        {% if article.views != 100001 %}
+                                            {{ article.views }}
+                                        {% else %}
+                                            100000+
+                                        {% endif %}
+                                    </td>
+                                    <td align="right">{{ article.likes }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="10000" style="text-align: center">暂无文章</td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/col-->
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>公告</h4>
+            </div>
+            {% if announcement %}
+                <div class="panel-body">
+                    <div class="alert alert-info" role="alert" style="word-wrap: break-word;">
+                        121231423412413241423412341324314234132112123142341241324142341234132431423413211212314234124132414234123413243142341321
+                        {{ announcement|linebreaksbr }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="panel-body" style="text-align: center">
+                    暂无管理员公告
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>未读站内消息</h4></div>
+            {% if unprocessed_account %}
+                <div class="panel-body">
+                    {% for account in unprocessed_account %}
+                        <p>
+                            <a style="cursor:pointer;" class="message-link"
+                               data-url="{% url 'message/admin' account.id %}">
+                                {{ account.name }}</a>
+                            <span class="badge pull-right">{{ account|unprocessed_messages_count:category }}</span>
+                        </p>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="panel-body" style="text-align: center">
+                    无未读消息
+                </div>
+            {% endif %}
+            <script>
+                $(".message-link").click(function () {
+                    loadContent($(this).data("url"), {});
+                });
+            </script>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>公众号影响力排行</h4>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>名称</th>
+                            <th>WCI</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if official_accounts %}
+                            {% for account in official_accounts %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td><a class="ajax-link" data-url="{% url 'admin/detail' account.id %}">
+                                        {{ account.name }}
+                                    </a></td>
+                                    <td>{{ account|wci }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="10000" style="text-align: center">暂无公众号</td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

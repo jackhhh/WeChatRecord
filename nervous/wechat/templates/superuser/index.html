@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}超级管理员后台 - 北京理工大学微信公众号备案平台{% endblock title %}
+
+{% block subtitle %}
+    <a class="navbar-brand">&gt;</a>
+    <a class="fake-link-scroll navbar-brand" href="{% url 'superuser' %}">超级管理员后台</a>
+{% endblock subtitle %}
+
+{% block left-column %}
+    <a class="fake-link left-column-menu" data-toggle="collapse" data-target="#application-menu">
+        <strong><i class="fa fa-wrench fa-fw"></i>　管理员账户</strong>
+    </a>
+    <ul class="nav nav-stacked collapse in" id="application-menu">
+        <hr>
+        <ul class="nav nav-stacked collapse in nav-pills" id="userMenu">
+            <li id="admins-list-item" class="nav-header left-column-item"
+                data-url="{% url 'superuser/admins' %}">
+                <a class="fake-link"><i class="fa fa-user fa-fw"></i>　管理员账户列表</a>
+            </li>
+            <li id="modify-announcement-item" class="nav-header left-column-item"
+                data-url="{% url 'superuser/modify-announcement' %}">
+                <a class="fake-link"><i class="fa fa-bullhorn fa-fw"></i>　修改管理员公告</a>
+            </li>
+        </ul>
+    </ul>
+    <hr>
+    <a class="fake-link left-column-menu" data-toggle="collapse" data-target="#analyse-menu">
+        <strong><i class="fa fa-database fa-fw"></i>　数据库管理</strong>
+    </a>
+    <ul class="nav nav-stacked collapse in" id="analyse-menu">
+        <hr>
+        <ul class="nav nav-stacked collapse in nav-pills" id="userMenu">
+            <li id="database-info-item" class="nav-header left-column-item"
+                data-url="{% url 'superuser/manage-database' %}">
+                <a class="fake-link"><i class="fa fa-th-large fa-fw"></i>　数据库信息概览</a>
+            </li>
+            <li id="update-data-item" class="nav-header left-column-item"
+                data-url="{% url 'superuser/update-database' %}">
+                <a class="fake-link"><i class="fa fa-cloud-download fa-fw"></i>　数据更新</a>
+            </li>
+        </ul>
+    </ul>
+    <hr>
+{% endblock left-column %}
+
+{% block main-page %}
+    <script>
+        $(function () {
+            loadContentOfItem("#admins-list-item");
+        });
+    </script>
+{% endblock main-page %}

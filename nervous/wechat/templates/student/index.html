@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}北京理工大学微信公众号备案平台{% endblock title %}
+
+{% block subtitle %}
+    <a class="navbar-brand fake-link-scroll">&gt;</a>
+    <a class="navbar-brand fake-link-scroll">学生备案申请</a>
+{% endblock subtitle %}
+
+{% block user-menu %}
+    <li><a href="{% url 'student/change-info' %}">
+        <i class="glyphicon glyphicon-info-sign"></i>　账号信息
+    </a></li>
+    <li role="separator" class="divider"></li>
+    <li><a href="{% url 'logout' %}">
+        <i class="glyphicon glyphicon-log-out"></i>　登出</a>
+    </li>
+{% endblock user-menu %}
+
+{% block left-column %}
+    <a class="fake-link left-column-menu" data-toggle="collapse" data-target="#application-menu">
+        <strong><i class="fa fa-wrench fa-fw"></i>　管理公众号申请</strong>
+    </a>
+    <hr>
+    <ul class="nav nav-stacked collapse in" id="application-menu">
+        <ul class="nav nav-stacked collapse in nav-pills">
+            <li id="my-applications-item" class="left-column-item"
+                data-url="{% url 'student/my-applications' %}">
+                <a class="fake-link">
+                    <i class="fa fa-briefcase fa-fw"></i>　我的备案申请
+                    <span class="badge badge-info pull-right"
+                          data-source="{% url 'badges/student/pending-count' %}"></span>
+                </a>
+            </li>
+            <li id="add-application-item" class="left-column-item"
+                data-url="{% url 'student/add-application' %}">
+                <a class="fake-link"><i class="fa fa-plus-circle fa-fw"></i>　添加备案申请</a>
+            </li>
+            {% for account in official_accounts %}
+                <li id="message-detail-{{ account.id }}" class="left-column-item"
+                    data-url="{% url 'message/student' account.id %}">
+                    <a class="fake-link">
+                        <i class="fa fa-comment fa-fw"></i>　站内信 - {{ account.name|truncatechars:6 }}
+                        <span class="badge badge-info pull-right"
+                              data-source="{% url 'badges/student/account-unprocessed-message-count' account.id %}">
+                        </span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </ul>
+
+
+{% endblock left-column %}
+
+{% block main-page %}
+    <script>
+        $(function () {
+            loadContentOfItem("#my-applications-item");
+        });
+    </script>
+{% endblock main-page %}

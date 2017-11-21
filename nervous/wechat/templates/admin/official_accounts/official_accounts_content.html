@@ -1,0 +1,19 @@
+{% extends 'common/sortable_content.html' %}
+{% load model_extras %}
+
+{% block no-data-info %}
+    暂无公众号
+{% endblock no-data-info %}
+
+{% block content %}
+    {% for account in items %}
+        <tr>
+            <td><a class="ajax-link" data-url="{% url 'admin/detail' account.id %}">
+                {{ account.name }}
+            </a></td>
+            <td>{{ account.wx_id }}</td>
+            <td>{{ account.description|linebreaksbr|truncatechars:100 }}</td>
+            <td>{{ account|wci }}</td>
+        </tr>
+    {% endfor %}
+{% endblock content %}

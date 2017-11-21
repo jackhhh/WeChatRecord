@@ -1,0 +1,23 @@
+{% if items %}
+    {% block content %}
+    {% endblock content %}
+    <tr>
+        <td colspan="10000" style="background-color: white;" align="right">
+            {% include 'common/pagination.html' %}
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="10000" style="text-align: center">
+            {% block no-data-info %}
+                无数据
+            {% endblock no-data-info %}
+        </td>
+    </tr>
+{% endif %}
+
+<script>
+    $(function () {
+        $(".item-count-badge").html("{{ item_count }}");
+    })
+</script>

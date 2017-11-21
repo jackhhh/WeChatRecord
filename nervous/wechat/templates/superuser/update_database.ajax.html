@@ -1,0 +1,92 @@
+<div class="top-row">
+    <a>&nbsp;</a>
+    <a class="fake-link pull-right">
+        <strong>数据更新　<i class="fa fa-cloud-download fa-fw"></i></strong>
+    </a>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>数据更新</h4></div>
+            <div class="panel-body">
+                <button id="update-button" type="button" class="btn btn-success" style="margin-bottom: 20px">更新</button>
+                <div class="progress" id="progress-item" style="display: none">
+                    <div id="progress-bar" class="progress-bar progress-bar-success progress-bar-striped active"
+                         role="progressbar"
+                         aria-valuemin="0" aria-valuemax="100" style="width: 0 %">
+                    </div>
+                </div>
+                <div id="update-status" style="display: none">
+                    正在更新：<span id="updating-account"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    StateEnum = Object.freeze({
+        NOT_STARTED: '__not_started__',
+        UPDATING: '__updating__',
+        FINISHED: '__finished__'
+    });
+
+    var gState;
+    var gProgress;
+    var gUpdatingAccount;
+
+    $(function () {
+        gState = StateEnum.NOT_STARTED;
+        gProgress = 0;
+        gUpdatingAccount = '';
+        timeToQuery();
+    });
+
+    $("#update-button").click(function () {
+        $.post("{% url 'api/update-start' %}", "", function () {
+            gState = StateEnum.UPDATING;
+            gProgress = 1;
+            timeToQuery();
+        });
+    });
+
+    function timeToQuery() {
+        $.ajax({
+            type: "GET",
+            url: "{% url 'superuser/progress-item' %}",
+            success: function (data) {
+                gProgress = data.progress;
+                gUpdatingAccount = data.updating_account;
+                if (gProgress < 100) {
+                    gState = StateEnum.UPDATING;
+                    setTimeout("timeToQuery()", 500);
+                } else {
+                    if (gState == StateEnum.UPDATING) {
+                        gState = StateEnum.FINISHED;
+                    }
+                }
+                if (gState == StateEnum.UPDATING) {
+                    gProgress = Math.max(1, gProgress);
+                }
+                updateUI();
+            }
+        });
+    }
+
+    function updateUI() {
+        if (gState != StateEnum.NOT_STARTED) {
+            document.getElementById("update-button").innerText = "更新中...";
+            document.getElementById("progress-item").style.display = "block";
+            $("#update-status").css("display", "block");
+        }
+        if (gState == StateEnum.FINISHED) {
+            document.getElementById("update-button").innerText = "更新完成";
+            document.getElementById("progress-bar").className = "progress-bar progress-bar-success progress-bar-striped";
+            $("#update-status").css("display", "none");
+        }
+        document.getElementById("progress-bar").style.width = gProgress + "%";
+        $("#updating-account").html(gUpdatingAccount);
+    }
+</script>

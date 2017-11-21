@@ -1,0 +1,85 @@
+<div class="top-row">
+    <a>&nbsp;</a>
+    <a class="fake-link pull-right">
+        <strong>管理员账号列表　<i class="fa fa-user fa-fw"></i></strong>
+    </a>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>管理员账号列表<span class="badge pull-right">{{ admins|length }}</span></h4></div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>备注</th>
+                            <th>邮箱</th>
+                            <th style="width: 70px">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <script>
+                            $(function () {
+                                $("body").popover({
+                                    html: true,
+                                    container: "body",
+                                    placement: "auto right",
+                                    selector: ".delete-link",
+                                    title: "确认删除账号？",
+                                    trigger: "focus"
+                                });
+                            });
+                        </script>
+                        {% for admin in admins %}
+                            <tr>
+                                <td>{{ admin.username }}</td>
+                                <td>{{ admin.description }}</td>
+                                <td>{{ admin.email }}</td>
+                                <td align="right">
+                                    <a href="javascript:void(0)" class="fake-link delete-link"
+                                       data-toggle="popover" tabindex="-1" data-content="
+                                        <form id='delete-admin-{{ forloop.counter }}-popover'>
+                                            {% csrf_token %}
+                                            <button class='btn btn-default'>取消</button>
+                                            <input style='display: none;' name='username' value='{{ admin.username }}'>
+                                            <span>　</span>
+                                            <button type='submit' class='btn btn-danger form-btn'>删除</button>
+                                        </form>
+                                        <script>
+                                            handleFormPost('#delete-admin-{{ forloop.counter }}-popover', '{% url 'api/del_admin' %}', {
+                                                success_callback: function (data) {
+                                                    if (data.status === 'ok') {
+                                                        showConfirmModal('删除管理员', '管理员 <b>{{ admin.username }}</b> 已删除', true);
+                                                        loadContentOfItem('#admins-list-item', {
+                                                            replace: true,
+                                                            anim: false,
+                                                            scroll: false
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        </script>">
+                                        <span class="fa fa-user-times"></span> 删除
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr style="margin-top: 0">
+                <ul class="list-inline pull-right">
+                    <li>
+                        <a href="javascript:showModal('{% url 'modals/superuser/add-admin-modal' %}', 'add-admin-modal')">
+                            <span class="fa fa-user-plus"></span> 添加管理员
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+<div class="modal fade" id="add-admin-modal" tabindex="-1" role="dialog" aria-labelledby="add-admin-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="add-admin-form" class="form form-vertical" role="form" data-toggle="validator" method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">添加管理员</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="username-input" class="control-label">用户名：</label>
+                        <input type="text" class="form-control" id="username-input" name="username" placeholder="用户名"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password-input" class="control-label">密码：</label>
+                        <input type="password" class="form-control" id="password-input" name="password_display"
+                               placeholder="密码" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email-input" class="control-label">邮箱：</label>
+                        <input type="email" class="form-control" id="email-input" name="email" placeholder="邮箱"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description-text" class="control-label">备注：</label>
+                        <textarea class="form-control" id="description-text" name="description" placeholder="备注"
+                                  required></textarea>
+                    </div>
+                    <input type="password" name="password" id="actual-password" style="display: none;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button id="add-admin-button" type="submit" class="btn btn-primary form-btn">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    handleFormPost("#add-admin-form", "{% url 'api/add_admin' %}", {
+        before_submit: function () {
+            var form = document.forms['add-admin-form'];
+            form['actual-password'].value = hex_md5(form['password-input'].value);
+        },
+        success_callback: function (data) {
+            if (data.status === 'ok') {
+                $("#add-admin-modal").modal('hide');
+                loadContentOfItem('#admins-list-item', {
+                    replace: true,
+                    anim: false,
+                    scroll: false
+                });
+            }
+        }
+    });
+</script>

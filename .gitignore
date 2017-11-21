@@ -1,0 +1,7 @@
+**/*.pyc
+**/*.swp
+**/*~
+*~
+**/.idea
+nervous/db.sqlite3
+**/.coverage

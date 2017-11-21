@@ -1,0 +1,162 @@
+<div class="top-row">
+    <a>&nbsp;</a>
+    <a class="fake-link pull-right">
+        <strong>我的备案申请　<i class="fa fa-briefcase fa-fw"></i></strong>
+    </a>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>我的备案申请<span class="badge pull-right">{{ pending_count }}</span></h4>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="application-list">
+                        <thead>
+                        <tr>
+                            <th>公众号名称</th>
+                            <th>公众号简介</th>
+                            <th>审批状态</th>
+                            <th>处理人</th>
+                            <th align="right">
+                                <div style="width: 135px"></div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <script>
+                            $(function () {
+                                $("body").popover({
+                                    html: true,
+                                    container: "body",
+                                    placement: "auto right",
+                                    selector: ".delete-link",
+                                    title: "确认删除申请？",
+                                    trigger: "focus"
+                                });
+                            });
+                        </script>
+                        {% if applications %}
+                            {% for app in applications %}
+                                <tr>
+                                    <td>{{ app.name }}</td>
+                                    <td>{{ app.description|linebreaksbr|safe }}</td>
+                                    <td>
+                                    <span class="label label-{{ app.status_display.colorclass }}">
+                                        <span class="fa {{ app.status_display.icon }} fa-fw"></span> {{ app.status_display.name }}
+                                    </span>
+                                    </td>
+                                    <td>{{ app.operator_admin }}</td>
+                                    <td style="text-align: right">
+                                        {% if app.status == 'pending' %}
+                                            <a data-id="{{ app.id }}" class="fake-link recall-link">
+                                                <span class="fa fa-share-square-o fa-fw"></span> 撤回
+                                            </a>
+                                        {% elif app.status == 'not_submitted' %}
+                                            <a data-id="{{ app.id }}" class="fake-link modify-link">
+                                                <span class="fa fa-edit fa-fw"></span> 修改
+                                            </a>
+                                            <span>&nbsp;&nbsp;</span>
+                                            <a href="javascript:void(0)" tabindex="-1" class="fake-link delete-link"
+                                               data-toggle="popover" data-content="
+                                            <div id='delete-app-{{ app.id }}-popover'>
+                                                {% csrf_token %}
+                                                <button class='btn btn-default'>取消</button>
+                                                <span>　</span>
+                                                <button type='button' class='btn btn-danger form-btn'
+                                                    data-id='{{ app.id }}'>删除</button>
+                                            </div>
+                                            <script>
+                                                $('#delete-app-{{ app.id }}-popover').find('button.form-btn')
+                                                    .click(delete_app_callback);
+                                            </script>">
+                                                <span class="fa fa-minus-square-o fa-fw"></span> 删除
+                                            </a>
+                                        {% elif app.status == 'rejected' %}
+                                            <a data-id="{{ app.id }}" class="fake-link modify-link">
+                                                <span class="fa fa-edit fa-fw"></span> 修改
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="10000" style="text-align: center">尚未申请备案</td>
+                            </tr>
+                        {% endif %}
+                        <script>
+                            $(function () {
+                                var msg = $("#error-msg");
+                                msg.fadeOut(0);
+                                msg.find("> button").click(function () {
+                                    $("#error-msg").fadeOut();
+                                });
+
+                                $(".modify-link").click(function () {
+                                    var id = $(this).data("id");
+                                    loadContent("/student/modify_application/" + id);
+                                });
+                                delete_app_callback = function (event) {
+                                    event.preventDefault();
+                                    var id = $(this).data("id");
+                                    var url = "/api/delete_application/" + id;
+                                    $.ajax({
+                                        type: "POST",
+                                        url: url,
+                                        data: "",
+                                        success: function (data) {
+                                            if (data.status === "ok") {
+                                                showConfirmModal("撤回申请", "删除成功！", true);
+                                                loadContentOfItem("#my-applications-item", {
+                                                    replace: true,
+                                                    anim: false,
+                                                    scroll: false
+                                                });
+                                            }
+                                        },
+                                        error: function (xhr, textStatus, errorThrown) {
+                                            var msg = $("#error-msg");
+                                            msg.find("label").html("提交申请遇到错误：" + textStatus + ": " + errorThrown);
+                                            console.log(xhr.responseText);
+                                            msg.fadeIn();
+                                        }
+                                    });
+                                };
+                                $(".recall-link").click(function (event) {
+                                    event.preventDefault();
+                                    var id = $(this).data("id");
+                                    var url = "/api/recall_application/" + id;
+                                    $.ajax({
+                                        type: "POST",
+                                        url: url,
+                                        data: "",
+                                        success: function (data) {
+                                            if (data.status === "ok") {
+                                                showConfirmModal("撤回已提交申请", "撤回成功！", true);
+                                                loadContentOfItem("#my-applications-item", {
+                                                    replace: true,
+                                                    anim: false,
+                                                    scroll: false
+                                                });
+                                            }
+                                        },
+                                        error: function (xhr, textStatus, errorThrown) {
+                                            var msg = $("#error-msg");
+                                            msg.find("label").html("提交申请遇到错误：" + textStatus + ": " + errorThrown);
+                                            console.log(xhr.responseText);
+                                            msg.fadeIn();
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

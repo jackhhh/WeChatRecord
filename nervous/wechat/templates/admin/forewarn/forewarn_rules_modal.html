@@ -1,0 +1,127 @@
+<div class="modal fade" id="forewarn-rules-modal" tabindex="-1" role="dialog" aria-labelledby="application-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">创建预警规则</h4>
+            </div>
+            <form id="rule-form" class="form form-vertical" data-toggle="validator" role="form">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="control-group row">
+                        <div class="col-sm-6 form-group">
+                            <label class="control-label" for="account-name-field">预警公众号账号</label>
+                            <input id="account-name-field" type="text" name="account_name" list="account-name-list"
+                                   class="form-control" placeholder=""
+                                   {% if rule.account %}value="{{ rule.account_name }}"{% endif %}>
+                            <span class="help-block with-errors">不填写默认为所有公众号</span>
+                            <datalist id="account-name-list">
+                                {% for id in wx_name %}
+                                    <option value="{{ id }}">
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label class="control-label" for="notification-field">通知方式</label>
+                            <select id="notification-field" name="notification" class="form-control">
+                                <option value="{{ NotificationOption.Email }}"
+                                        {% if rule.notification == NotificationOption.Email %}selected{% endif %}>
+                                    邮件
+                                </option>
+                                <option value="{{ NotificationOption.Message }}" disabled
+                                        {% if rule.notification == NotificationOption.Message %}selected{% endif %}>
+                                    站内通知
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="duration-field">预警时限</label>
+
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="input-group">
+                                    <input id="duration-field" name="duration" type="text" class="form-control"
+                                           data-error="请填写合法天数(1-365)" pattern="^[1-9]\d{0,2}$" required
+                                           value="{{ rule.duration }}">
+
+                                    <div class="input-group-addon">天</div>
+                                </div>
+                                <span class="help-block with-errors">1-365</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="value-field">预警规则</label>
+
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <select id="target-field" name="target" class="form-control">
+                                    <option value="{{ ForewarnTarget.ViewsTotal }}"
+                                            {% if rule.target == ForewarnTarget.ViewsTotal %}selected{% endif %}>
+                                        阅读量
+                                    </option>
+                                    <option value="{{ ForewarnTarget.LikesTotal }}" disabled
+                                            {% if rule.target == ForewarnTarget.LikesTotal %}selected{% endif %}>
+                                        点赞数
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2 form-group">
+                                <select name="" class="form-control">
+                                    <option value="大于">大于</option>
+                                    <option value="小于" disabled>小于</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <div class="input-group">
+                                    <input id="value-field" name="value" type="text" class="form-control"
+                                           data-error="请填写合法数字" pattern="^[1-9]\d*$" required
+                                           value="{{ rule.value }}">
+
+                                    <div class="input-group-addon">条</div>
+                                </div>
+                                <span class="help-block with-errors">1-999</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-error-msg alert alert-danger alert-dismissible">
+                        <div></div>
+                        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                取消
+                            </button>
+                            <button id="form-submit" type="submit" class="btn btn-primary">
+                                完成
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <input style="display:none" name="id" value="{{ rule.id }}">
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    {% if type == "add" %}
+        var url = "{% url 'api/submit_rule' %}";
+    {% elif type == "modify" %}
+        var url = "{% url 'api/modify_rule' %}";
+    {% endif %}
+    handleFormPost("#rule-form", url, {
+        success_callback: function (data) {
+            if (data.status === 'ok') {
+                $("#forewarn-rules-modal").modal('hide');
+                refreshTable();
+            }
+        }
+    });
+</script>

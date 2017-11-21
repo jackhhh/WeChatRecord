@@ -1,0 +1,133 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>{% block title %}北京理工大学微信公众号备案平台{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--[if lt IE 9]>
+        <script src="{% static 'ie/html5shiv.js' %}"></script>
+        <script src="{% static 'ie/jquery-1.11.3.min.js' %}"></script>
+        <script src="{% static 'ie/css3-mediaqueries.js' %}"></script>
+    <![endif]-->
+    <!-- stylesheets -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'base/css/fonts.min.css' %}" rel="stylesheet">
+    <link href="{% static 'base/css/eden.min.css' %}" rel="stylesheet">
+    <link href="{% static 'animate/css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'base/css/styles.css' %}" rel="stylesheet">
+    {% block css %}
+    {% endblock css %}
+    <!-- script references -->
+    <script src="{% static 'jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'jquery/jquery.history.min.js' %}"></script>
+    <script src="{% static 'jquery/jquery.scrollto.min.js' %}"></script>
+    <script src="{% static 'jquery/jquery.fixer.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+    <script src="{% static 'base/js/scripts.js' %}"></script>
+    <script src="{% static 'md5/md5.min.js' %}"></script>
+    <script src="{% static 'validator/validator.min.js' %}"></script>
+    {% block scripts %}
+    {% endblock scripts %}
+</head>
+
+<body>
+<!-- header -->
+<div id="top-nav" class="navbar navbar-default navbar-static-top affix">
+    <div class="container-fluid">
+        <!--[if IE]>
+        <div class="alert alert-info" style="text-align: center;">
+            如果页面显示不正确，请尝试<b>使用较新版本的IE浏览器</b>、<b>关闭浏览器的IE兼容模式</b>，或者<b>使用Chrome浏览器</b>访问网站。
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <![endif]-->
+        <div class="nav navbar-nav navbar-left visible-xs">
+            <a class="fake-link-scroll navbar-brand">北京理工大学微信公众号备案平台</a>
+        </div>
+        <div class="nav navbar-nav navbar-left hidden-xs">
+            <a class="fake-link-scroll navbar-brand">北京理工大学微信公众号备案平台</a>
+            {% block subtitle %}
+                <!-- example
+                <a class="navbar-brand">&gt;</a>
+                <a class="fake-link-scroll navbar-brand">管理员后台</a>
+                -->
+            {% endblock subtitle %}
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="pull-left visible-xs">
+                <a id="left-column-toggle" class="fake-link">
+                    <i class="fa fa-navicon fa-fw"></i>
+                </a>
+            </li>
+            <li class="pull-right dropdown">
+                <a class="fake-link dropdown-toggle" role="button" data-toggle="dropdown" data-target="#">
+                    <i class="glyphicon glyphicon-user"></i> {{ username }} <span class="caret"></span>
+                </a>
+                <ul id="g-account-menu" class="dropdown-menu" role="menu">
+                    {% block user-menu %}
+                        <li><a href="{% url 'logout' %}">
+                            <i class="glyphicon glyphicon-log-out"></i>　登出</a>
+                        </li>
+                    {% endblock user-menu %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- /container -->
+</div>
+<!-- /Header -->
+<!-- Main -->
+<div class="container-fluid main">
+    {% block main-frame %}
+        <div class="row">
+            <div id="left-column">
+                <!-- Left column -->
+                <div class="container column-container">
+                    {% block left-column %}
+                    {% endblock left-column %}
+                </div>
+                {% if active_item %}
+                    <script>
+                        var container = $(".column-container"),
+                                item = $("#" + "{{ active_item }}.left-column-item");
+                        item.addClass("active");
+                        if (item.position().top > container.outerHeight())
+                            container.scrollTo(item);
+                    </script>
+                {% endif %}
+                <div class="hidden-xs scroll-edge scroll-edge-top fake-link" style="opacity: 0;">
+                    <img src="{% static 'image/scroll-edge-top.png' %}"
+                         style="position: absolute; top: 0;">
+                    <span class="fa fa-chevron-up"
+                          style="position: absolute; top: 10px; left: 50%; opacity: 0.5"></span>
+                </div>
+                <div class="hidden-xs scroll-edge scroll-edge-bottom fake-link" style="opacity: 0;">
+                    <img src="{% static 'image/scroll-edge-bottom.png' %}"
+                         style="position: absolute; bottom: 0;">
+                    <span class="fa fa-chevron-down"
+                          style="position: absolute; bottom: 10px; left: 50%; opacity: 0.5;"></span>
+                </div>
+            </div>
+            <div class="container-fluid" id="main-page">
+                <!-- Main page -->
+                {% block main-page %}
+                {% endblock main-page %}
+            </div>
+        </div>
+    {% endblock main-frame %}
+</div>
+<!-- /Main -->
+
+<footer class="text-center">北京理工大学公众号管理系统</footer>
+
+{% block modals %}
+{% endblock modals %}
+
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+{% extends 'common/sortable.html' %}
+
+{% block title %}预警规则列表{% endblock title %}
+
+{% block defaults %}
+    url: "{% url 'admin/forewarn-rules-list' %}",
+    sort_by: "id",
+    sort_order: "asc"
+{% endblock defaults %}
+
+{% block head %}
+    <th class="th-sortable" data-key="id">预警条目</th>
+    <th>预警公众号范围</th>
+    <th>预警时限</th>
+    <th>通知方式</th>
+    <th>具体规则</th>
+    <th align="right">
+        <div style="width: 135px"></div>
+    </th>
+{% endblock head %}
+
+{% block content-before %}
+    <script>
+        $(function () {
+            $("body").popover({
+                html: true,
+                container: "body",
+                placement: "auto right",
+                selector: ".delete-link",
+                title: "确认删除预警规则？",
+                trigger: "focus"
+            });
+        });
+
+        delete_rule_callback = function (event) {
+            event.preventDefault();
+            var id = $(this).data("id");
+            var url = "/api/delete_forewarn_rule/" + id;
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: "",
+                success: function (data) {
+                    if (data.status === "ok") {
+                        showConfirmModal("删除预警规则", "删除成功！", true);
+                        refreshTable();
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    var msg = $("#error-msg");
+                    msg.find("label").html("提交申请遇到错误：" + textStatus + ": " + errorThrown);
+                    console.log(xhr.responseText);
+                    msg.fadeIn();
+                }
+            });
+        };
+    </script>
+{% endblock content-before %}
+
+{% block content-after %}
+    <hr style="margin-top: 0">
+    <ul class="list-inline pull-right">
+        <li><a href="javascript:showModal('{% url 'modals/admin/add-forewarn-rules-modal' %}', 'forewarn-rules-modal')">
+            <span class="fa fa-plus-square fa-fw"></span> 添加预警规则
+        </a></li>
+    </ul>
+{% endblock content-after %}

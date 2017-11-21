@@ -1,0 +1,130 @@
+{% load staticfiles %}
+{% load model_extras %}
+
+<script type="text/javascript" src="{% static 'base/js/charts.min.js' %}"></script>
+
+<div class="row">
+    <div class="col-sm-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>数据图表</h4>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead style="visibility: hidden;">
+                        <th class="visible-xs" style="min-width: 500px;"></th>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <ul class="nav nav-tabs">
+                                    <li role="presentation" class="active">
+                                        <a href="#oa-chart" data-toggle="tab">公众号统计数据</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#article-chart" data-toggle="tab">文章统计数据</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#history-chart" data-toggle="tab">历史数据变化</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" data-loading="true">
+                                    <div id="oa-chart" class="tab-pane fade active in">
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <object id="oa-chart-container" data-type="mscombidy2d"
+                                                    data-json='{{ oa_chart_json }}'></object>
+                                        </div>
+                                        <div class="pull-right" style="font-size: 8px;">
+                                            数据来源：<a href="http://www.gsdata.cn/">新媒体指数</a>；无法获取到对应数据的日期不会在图表中显示。
+                                        </div>
+                                    </div>
+                                    <div id="article-chart" class="tab-pane fade">
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <object id="article-views-chart-container" data-type="pie2d"
+                                                    data-json='{{ article_views_chart_json }}'></object>
+                                        </div>
+                                        <hr>
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <object id="article-likes-chart-container" data-type="pie2d"
+                                                    data-json='{{ article_likes_chart_json }}'></object>
+                                        </div>
+                                        <div class="pull-right" style="font-size: 8px;">
+                                            数据来源：<a href="http://www.gsdata.cn/">新媒体指数</a>。
+                                        </div>
+                                    </div>
+                                    <div id="history-chart" class="tab-pane fade">
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <object id="history-chart-container" data-type="line"
+                                                    data-json='{{ history_chart_json }}'></object>
+                                        </div>
+                                        <div class="pull-right" style="font-size: 8px;">
+                                            数据来源：<a href="http://www.gsdata.cn/">新媒体指数</a>；图中每天的WCI为后台计算而非抓取得到，因此可能与实际值有偏差，仅供参考。
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <script>
+                    var charts = $(".tab-pane object");
+                    charts.html('\
+                        <div style="width: 100%; text-align: center; opacity: 50;">\
+                            <span class="fa fa-spinner fa-pulse fa-4x"></span>\
+                        </div>');
+
+                    var longLoadTimer = setTimeout(function () {
+                        charts.append('<p></p>' +
+                                        '<p class="wait-text" style="text-align: center; font-size: 10px;">图表控件需要较长时间载入，请耐心等待……</p>')
+                                .find(".wait-text").fadeOut(0).fadeIn(1000);
+                    }, 5000);
+
+                    var errorHandler = function () {
+                        charts.data("json", "");
+                        charts.html('<p style="text-align: center; color: red">图表载入出错</p>');
+                    };
+
+                    var loadChart = function () {
+                        clearTimeout(longLoadTimer);
+                        $(".tab-content").data("loading", "");
+                        drawCharts($(".tab-pane.active object"));
+                    };
+
+                    [
+                        "{% static 'fusioncharts/fusioncharts.js' %}",
+                        "{% static 'fusioncharts/fusioncharts.charts.js' %}",
+                        "{% static 'fusioncharts/fusioncharts-jquery-plugin.min.js' %}",
+                        "{% static 'fusioncharts/themes/fusioncharts.theme.zune.js' %}",
+                        "{% static 'fusioncharts/startrender.js' %}"
+                    ].forEach(function (src) {
+                        var script = document.createElement('script');
+                        script.src = src;
+                        script.async = false;
+                        document.head.appendChild(script);
+                    });
+
+                    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                        drawCharts($($(e.target).attr("href")).find("object"));
+                    })
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>统计数据</h4>
+            </div>
+            <div class="panel-body">
+                <div style="line-height: 160%;">
+                    <b>发布文章数：</b>{{ article_count }}<br/>
+                    <b>文章总阅读数：</b>{{ account|views_total }}<br/>
+                    <b>文章总点赞数：</b>{{ account|likes_total }}<br/>
+                    <b>WCI：</b>{{ account|wci }}<br/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

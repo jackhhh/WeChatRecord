@@ -1,0 +1,80 @@
+{% extends 'common/sortable_content.html' %}
+{% load model_extras %}
+
+{% block no-data-info %}
+    暂无公众号
+{% endblock no-data-info %}
+
+{% block content %}
+    {% for account in items %}
+        <tr>
+            <td><a class="ajax-link" data-url="{% url 'admin/detail' account.id %}">
+                {{ account.name }}
+            </a></td>
+            <td>{{ account.wx_id }}</td>
+            <td>{{ account.description|linebreaksbr|truncatechars:100 }}</td>
+            <td>{{ account|wci}}</td>
+            <td align="right">
+                <a style="cursor: pointer;" class="add-to-list-link" data-item='
+                    <tr id="chosen-item-{{ account.id }}">
+                        <td><a class="ajax-link" data-url="{% url 'admin/detail' account.id %}">
+                            {{ account.name }}
+                        </a></td>
+                        <td>{{ account.wx_id }}</td>
+                        <td>{{ account.description|linebreaksbr|truncatechars:100 }}</td>
+                        <td>{{ account|wci }}</td>
+                        <td align="right">
+                            <a style="cursor:pointer;" data-id="{{ account.wx_id }}"
+                                data-item-id="chosen-item-{{ account.id }}" class="remove-from-list-link">
+                                <span class="fa fa-minus-square fa-fw"></span> 删除</a>
+                        </td>
+                    </tr>'>
+                    <span class="fa fa-plus-square fa-fw"></span> 添加
+                </a>
+
+                <div style="display: none;" class="already-added-label">
+                    <span class="fa fa-check-square fa-fw"></span> 已添加
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+
+    <script>
+        function toggleStatusDisplay(name, obj) {
+            if ($.inArray(name, chosen_names) !== -1) {
+                obj.find(".already-added-label").css("display", "");
+                obj.find(".add-to-list-link").css("display", "none").data("item", "");
+            }
+        }
+
+        $(".sortable tbody tr").has(".add-to-list-link").each(function () {
+            var name = $(this).find("td:nth-child(2)").html();
+            toggleStatusDisplay(name, $(this).find(":last-child"));
+        });
+
+        $(".add-to-list-link").click(function () {
+            var td = $(this).parent(), tr = td.parent();
+            var name = tr.find("td:nth-child(2)").html();
+            $.scrollTo("+=" + td.outerHeight(true));
+            $("#chosen-list").append($(this).data("item"))
+                    .find(":last-child").css("display", "none").fadeIn(200);
+            chosen_names.push(name);
+            toggleChosenListDisplay();
+            toggleStatusDisplay(name, td);
+
+            $(".remove-from-list-link").unbind().click(function () {
+                var id = "#" + $(this).data("item-id");
+                var name = $(this).data("id");
+                var index = $.inArray(name, chosen_names);
+                if (index > -1) {
+                    chosen_names.splice(index, 1);
+                    toggleChosenListDisplay();
+                    $(id).fadeOut(200, function () {
+                        $(this).remove();
+                        refreshTable();
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock content %}

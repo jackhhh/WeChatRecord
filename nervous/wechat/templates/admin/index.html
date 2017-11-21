@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}管理员后台 - 北京理工大学微信公众号备案平台{% endblock %}
+
+{% block subtitle %}
+    <a class="navbar-brand">&gt;</a>
+    <a class="fake-link-scroll navbar-brand">管理员后台</a>
+{% endblock subtitle %}
+
+{% block left-column %}
+    <a class="fake-link left-column-menu" data-toggle="collapse" data-target="#dashboard-menu">
+        <strong><i class="fa fa-dashboard fa-fw"></i>　信息概览</strong>
+    </a>
+    <ul class="nav nav-stacked collapse in" id="dashboard-menu">
+        <hr>
+        <ul class="nav nav-stacked collapse in nav-pills">
+            <li id="dashboard-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/dashboard' %}">
+                <a class="fake-link"><i class="fa fa-dashboard fa-fw"></i>　信息概览</a>
+            </li>
+        </ul>
+    </ul>
+    <hr>
+    <a class="fake-link left-column-menu" data-toggle="collapse" data-target="#application-menu">
+        <strong><i class="fa fa-wrench fa-fw"></i>　管理公众号申请</strong>
+    </a>
+    <ul class="nav nav-stacked collapse in" id="application-menu">
+        <hr>
+        <ul class="nav nav-stacked collapse in nav-pills">
+            <li id="pending-applications-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/applications' 'pending' %}">
+                <a class="fake-link"><i class="fa fa-tasks fa-fw"></i>　待审批申请
+                    <span class="badge badge-info pull-right" data-source="{% url 'badges/admin/pending-count' %}"></span>
+                </a>
+            </li>
+            <li id="processed-applications-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/applications' 'processed' %}">
+                <a class="fake-link"><i class="fa fa-check fa-fw"></i>　我处理的申请</a>
+            </li>
+            <li id="all-applications-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/applications' 'all' %}">
+                <a class="fake-link"><i class="fa fa-list-alt fa-fw"></i>　所有申请</a>
+            </li>
+        </ul>
+    </ul>
+    <hr>
+    <a class="fake-link left-column-menu" data-toggle="collapse" data-target="#analyse-menu">
+        <strong><i class="fa fa-signal fa-fw"></i>　查看并分析</strong>
+    </a>
+    <ul class="nav nav-stacked collapse in" id="analyse-menu">
+        <hr>
+        <ul class="nav nav-stacked collapse in nav-pills">
+            <li id="official-accounts-list-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/official-accounts' %}">
+                <a class="fake-link"><i class="fa fa-th-list fa-fw"></i>　公众号列表</a>
+            </li>
+            <li id="articles-list-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/articles' %}">
+                <a class="fake-link"><i class="fa fa-file-text fa-fw"></i>　文章列表</a>
+            </li>
+            <li id="statistics-list-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/statistics' %}">
+                <a class="fake-link"><i class="fa fa-bar-chart fa-fw"></i>　统计信息</a>
+            </li>
+        </ul>
+    </ul>
+    <hr>
+    <a class="fake-link left-column-menu" data-toggle="collapse" data-target="#forewarn-menu">
+        <strong><i class="fa fa-bell fa-fw"></i>　数据预警</strong>
+    </a>
+    <ul class="nav nav-stacked collapse in" id="forewarn-menu">
+        <hr>
+        <ul class="nav nav-stacked collapse in nav-pills">
+            <li id="forewarn-rules-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/forewarn-rules' %}">
+                <a class="fake-link"><i class="fa fa-sliders fa-fw"></i>　预警规则</a>
+            </li>
+            <li id="forewarn-records-item" class="nav-header left-column-item"
+                data-url="{% url 'admin/forewarn-records' %}">
+                <a class="fake-link"><i class="fa fa-history fa-fw"></i>　预警记录</a>
+            </li>
+        </ul>
+    </ul>
+    <hr>
+{% endblock left-column %}
+
+{% block main-page %}
+    <script>
+        $(function () {
+            loadContentOfItem("#dashboard-item");
+        });
+    </script>
+{% endblock main-page %}
+
+{% block modals %}
+{% endblock modals %}

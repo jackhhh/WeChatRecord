@@ -1,0 +1,88 @@
+{% load staticfiles %}
+
+<script type="text/javascript" src="{% static 'fusioncharts/fusioncharts.js' %}"></script>
+<script type="text/javascript" src="{% static 'fusioncharts/themes/fusioncharts.theme.zune.js' %}"></script>
+<script type="text/javascript" src="{% static 'fusioncharts/fusioncharts-jquery-plugin.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'base/js/charts.js' %}"></script>
+
+<div class="top-row">
+    <a>&nbsp</a>
+    <a class="fake-link pull-right">
+        <strong>统计信息　<i class="fa fa-bar-chart fa-fw"></i></strong>
+    </a>
+</div>
+<hr>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>已选公众号</h4>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th style="width: 15%; min-width: 120px">公众号名称</th>
+                    <th style="width: 15%; min-width: 110px">微信ID</th>
+                    <th>公众号简介</th>
+                    <th>WCI</th>
+                    <th>
+                        <div style="width: 60px"></div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="chosen-list">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'admin/statistics/official_accounts_list.html' %}
+
+<script>
+    var chosen_list = $("#chosen-list");
+    var chosen_names = [];
+    /*
+        function chosen_names() {
+            var ret = [];
+            chosen_list.find("tr").find("td:nth-child(2)").each(function () {
+                ret.push($(this).html());
+            });
+            return ret;
+        }
+    */
+    function toggleChosenListDisplay() {
+        if (chosen_names == "") {
+            chosen_list.fadeOut(200, function () {
+                $(this).html("").append('\
+                    <tr id="chosen-list-no-data-column">\
+                        <td colspan="10000" style="text-align: center">未选择公众号</td>\
+                    </tr>').css("display", "none").fadeIn(200);
+            });
+        } else {
+            $("#chosen-list-no-data-column").remove();
+            var first_item = true;
+            var button_field = $("#chosen-list-ok-button-column");
+            if (typeof button_field !== "undefined") {
+                first_item = false;
+                button_field.remove();
+            }
+            button_field = chosen_list.append('\
+            <tr id="chosen-list-ok-button-column" style="background-color: white;">\
+                <td colspan="10000" style="text-align: right">\
+                    <button class="btn btn-primary" onclick="loadComparison()">对比信息</button>\
+                </td>\
+            </tr>').find("#chosen-list-ok-button-column");
+            if (first_item)
+                button_field.css("display", "none").fadeIn(200);
+        }
+    }
+
+    function loadComparison() {
+        showConfirmModal("尚未实现", "对不起，对比图表显示暂未实现。", true);
+    }
+
+    chosen_list.ready(function () {
+        toggleChosenListDisplay();
+    });
+</script>

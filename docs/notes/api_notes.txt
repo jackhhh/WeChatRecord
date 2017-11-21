@@ -1,0 +1,157 @@
+/backend
+
+action=add_admin
+...
+
+action=del_admin
+...
+
+action=submit_application
+name
+description
+association
+manager_name
+manager_student_id
+manager_dept
+manager_tel
+manager_
+
+
+(jump to id page)
+
+
+action=login
+username
+password
+
+
+action=modify_application
+id
+name
+description
+association
+manager_name
+manager_student_id
+manager_dept
+manager_tel
+manager_email
+status
+operator_admin_id
+
+==================================
+
+database.backend
+
+get_pending_applications
+
+get_applications
+(all applications, including approved)
+(return operator admin name but not id)
+
+get_official_accounts
+
+get_admins
+
+Enum:
+	SortOrder.Ascending
+	SortOrder.Descending
+	SortBy.Likes
+	SortBy.Views
+
+Articles:
+	get_articles(
+		sortby = SortBy.?,
+		order = SortOrder.?,
+		start_from = ?,
+		count = ?,
+		filter = dict: {
+			official_account_id = ?,
+			article_title_keyword = ?,
+		}
+	)
+
+Enum:
+	MessageCategory.All # used when query
+	MessageCategory.ToStudent
+	MessageCategory.ToAdmin
+
+
+Messages:
+	get_messages(
+		category = MessageCategory.?,
+		official_account_id = ?,
+		only_unprocessed = True / False,
+    )
+
+	add_message(
+		category = MessageCategory.?,
+		official_account_id = ?,
+		title,
+		content
+	)
+
+
+Forewarning:
+    Enum:
+        ForewarnTarget.
+            ViewTotal
+
+        NotificationOption.
+            Message,
+            Email
+
+    add_forewarn_rule(dic)
+    get_forewarn_rules()
+
+
+==================================
+
+database:
+
+Application:
+    id
+    name
+    description
+    association
+    manager_name
+    manager_student_id
+    manager_dept
+    manager_tel
+    manager_email
+    status
+    operator_admin_id
+
+Message:
+    realname
+    datetime
+    official_account
+    category = MessageCategory.?
+    title
+    content
+    processed
+
+
+AccountRecord:
+    likes
+    views
+    subscribers
+    wci
+    date
+
+
+ForewarnRule:
+    account (None if applied to all accounts)
+    duration (in days)
+    notification = NotificationOption.?
+    target = ForewarnTarget.?
+    value
+    [ <- official_account_id ]
+    [ -> id, account_name, ]
+
+
+ForewarnRecord:
+    datetime
+    account
+    target
+    value
+    [ -> account_id, account_name ]

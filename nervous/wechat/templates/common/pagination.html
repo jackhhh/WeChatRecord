@@ -1,0 +1,75 @@
+<nav class="pagination-container">
+    <ul class="pagination">
+        {% if page.current > 1 %}
+            <li class="pager-link" data-page="{{ page.current|add:'-1' }}">
+                <a class="fake-link" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="disabled">
+                <a aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% endif %}
+
+        {% if page.pages %}
+            {% if page.pages|first > 1 %}
+                {% if page.pages|last > 2 %}
+                    <li class="pager-link" data-page="1">
+                        <a class="fake-link">1</a>
+                    </li>
+                {% endif %}
+                <li class="disabled"><a>...</a></li>
+            {% endif %}
+
+            {% for p in page.pages %}
+                {% if p == page.current %}
+                    <li class="active pager-link" data-page="{{ p }}">
+                        <a class="fake-link">{{ p }}</a>
+                    </li>
+                {% else %}
+                    <li class="pager-link" data-page="{{ p }}">
+                        <a class="fake-link">{{ p }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page.pages|last < page.count %}
+                <li class="disabled"><a>...</a></li>
+                {% if page.pages|last < page.count|add:'-1' %}
+                    <li class="pager-link" data-page="{{ page.count }}">
+                        <a class="fake-link">{{ page.count }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        {% if page.current < page.count %}
+            <li class="pager-link" data-page="{{ page.current|add:'1' }}">
+                <a class="fake-link" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="disabled">
+                <a aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+
+    <script>
+        $(".pagination").ready(function () {
+            $(".pager-link").click(function () {
+                var this_params = sort_params;
+                this_params['page'] = $(this).data("page");
+                loadContentOn($(".sortable tbody"), sort_url, this_params, {anim: false, scroll: false}, function () {
+                    //$.scrollTo($(".sortable"), {offset: -removePx($(".main").css("padding-top"))});
+                });
+            });
+        });
+    </script>
+</nav>
