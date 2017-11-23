@@ -1,6 +1,6 @@
 from django_cas_ng import views
 from django.http import HttpResponseRedirect,JsonResponse
-from session import add_session 
+from wechat import session.add_session
 
 def cas_check(request):
     if(request.user.isauthenticate()):
