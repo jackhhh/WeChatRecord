@@ -2,6 +2,9 @@
 
 A website used to manage WeChat official accounts.
 
+## Codes edited by:
+
+[Jack.H](https://github.com/jackhhh) & [dakehero](https://github.com/dakehero) & [DastanSE](https://github.com/DastanSE)
 
 # Project Environment:
 
@@ -18,13 +21,7 @@ django_nose
 requests
 
 
-# Baed on a TSU project
+## Baed on a TSU project
 Team members:
 
-黄豪硕 
-
-胡泽聪
-
-韦毅龙
-
-杨天龙 
+黄豪硕 胡泽聪 韦毅龙 杨天龙 
