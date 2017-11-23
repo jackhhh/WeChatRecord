@@ -1,7 +1,24 @@
 # A Nervous Project
 
-A website used to manage WeChat official accounts in Tsinghua University.
+A website used to manage WeChat official accounts.
 
+
+# Project Environment:
+
+Python 2.7.10
+
+Django 1.8.4 (be sure to lower than 1.10)
+
+nose
+
+coverage
+
+django_nose
+
+requests
+
+
+# Baed on a TSU project
 Team members:
 
 黄豪硕 
@@ -10,14 +27,4 @@ Team members:
 
 韦毅龙
 
-杨天龙 yangtianlong111@gmail.com
-
-
-
-# Project Environment:
-
-Python 2.7.10
-
-Django 1.8.4
-
-![image](imgs/logo.png)
+杨天龙 
