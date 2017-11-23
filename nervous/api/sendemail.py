@@ -5,9 +5,9 @@ from email.mime.text import MIMEText
 
 #email_from
 mailfrom_host = "smtp.163.com"
-mailfrom_user = "no-reply"
-mailfrom_pass = "mailBITNP2016"
-mailfrom_postfix = "bitnp.net"
+mailfrom_user = "anervousemail"
+mailfrom_pass = "ugaxgzionibwqhlv"
+mailfrom_postfix = "163.com"
 mailfrom_mail=mailfrom_user + "@" + mailfrom_postfix   # anervousemail@163.com
 
 
