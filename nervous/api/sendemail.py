@@ -5,9 +5,9 @@ from email.mime.text import MIMEText
 
 #email_from
 mailfrom_host = "smtp.163.com"
-mailfrom_user = "anervousemail"
-mailfrom_pass = "ugaxgzionibwqhlv"
-mailfrom_postfix = "163.com"
+mailfrom_user = "no-reply"
+mailfrom_pass = "mailBITNP2016"
+mailfrom_postfix = "bitnp.net"
 mailfrom_mail=mailfrom_user + "@" + mailfrom_postfix   # anervousemail@163.com
 
 
@@ -45,13 +45,13 @@ def email_rule_id(mailto_mail, mailto_name, id):
     </body>
     <p><b>%s</b> 管理员您好,</p>
     <p>&emsp;您在 <b><font color="green">北京理工大学微信公众号备案平台</font></b> 上设置的第 <b>%s</b> 号预警规则触发了</p>
-    <p>&emsp;请前往<a href="166.111.206.69">166.111.206.69</a>查看</p>
+    <p>&emsp;请前往<a href="http://45.78.2.193">45.78.2.193</a>查看</p>
     </body>
     ''' % (mailto_name, id)
     send_singal_email(mailto_mail, mailto_name, sub, content)
 
-mailto_mail = "wyl8899k@gmail.com"
-mailto_name="HuangDaDa"
+mailto_mail = "me@jackh.cn"
+mailto_name="Jack"
 
 #[example] send email
 if __name__ == '__main__':
