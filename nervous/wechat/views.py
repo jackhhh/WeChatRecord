@@ -10,6 +10,7 @@ from django.utils import timezone
 from database import backend
 from database.models import *
 from wechat import session
+from django_cas_ng import views as cas_views
 
 
 # misc
@@ -105,6 +106,7 @@ def index(request):
         return notfound(request)
 
 
+
 def render_ajax(request, url, params, item_id=''):
     if request.is_ajax():
         url = '.'.join(url.split('.')[:-1]) + '.ajax.html'
@@ -129,6 +131,9 @@ def render_ajax(request, url, params, item_id=''):
 
 def login(request):
     return render(request, 'login.html')
+
+
+
 
 
 def logout(request):

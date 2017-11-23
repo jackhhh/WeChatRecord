@@ -127,9 +127,9 @@ def login(request):
     username, password = request.POST['account'], request.POST['password']
     print username, password
     if settings.DEBUG:
-        priority = ['superuser', 'student', 'admin']
+        priority = ['superuser',  'admin']
     else:
-        priority = ['superuser', 'admin', 'student']
+        priority = ['superuser', 'admin']
     for identity in priority:
         print 'trying login with identity = %s' % identity
         if globals()['check_%s' % identity](username, password):

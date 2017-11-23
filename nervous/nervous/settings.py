@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'wechat',
     'api',
     'database',
+    'django_cas_ng',
 )
 
 # Use nose to run all tests
@@ -127,3 +128,10 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder"
 )
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_cas_ng.backends.CASBackend',
+)
+
+CAS_SERVER_URL = 'https://login.bit.edu.cn/devcas/'
