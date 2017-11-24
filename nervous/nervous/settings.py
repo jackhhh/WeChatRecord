@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'wechat',
     'api',
     'database',
+    'django_cas_ng',
 )
 
 # Use nose to run all tests
@@ -67,6 +68,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'django_cas_ng.middleware.CASMiddleware'
 )
 
 ROOT_URLCONF = 'nervous.urls'
@@ -127,3 +129,11 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder"
 )
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_cas_ng.backends.CASBackend',
+)
+
+CAS_SERVER_URL = 'https://login.bit.edu.cn/devcas/'
+CAS_REDIRECT_URL = 'student'

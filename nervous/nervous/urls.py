@@ -102,7 +102,10 @@ urlpatterns = [
 
     # api part
     url(r'^api/login/?$', 'api.views.login', name='api/login'),
-
+    url(r'^api/cas_check/?$','api.views.cas_check',name='api/cas_check'),
+    url(r'^api/cas_login/?$','django_cas_ng.views.login',name='api/cas_login'),
+    url(r'^api/cas_logout/?$','django_cas_ng.views.logout',name='api/cas_logout'),
+    url(r'^api/callback$', 'django_cas_ng.views.callback', name='cas_ng_proxy_callback'),
     url(r'^api/submit_application/?$', 'api.views.submit_application', name='api/submit_application'),
     url(r'^api/modify_application/?$', 'api.views.modify_application', name='api/modify_application'),
     url(r'^api/delete_application/([0-9]+)/?$', 'api.views.delete_application', name='api/delete_application'),

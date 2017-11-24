@@ -68,7 +68,8 @@
                     $(".error-msg").html("无法登录：" + textStatus + ": " + errorThrown);
                 }
             });
-        }
+        }       
+
     </script>
 </head>
 
@@ -89,7 +90,7 @@
         </div>
         <div class="card">
             <div class="banner">
-                <h2>请使用<b>统一身份认证</b>登录</h2>
+                <h2>请登录</h2>
             </div>
 
             <form id="login-form">
@@ -103,6 +104,10 @@
                 <input id="signin-button" type="submit" class="rc-button rc-button-submit"
                        value="登录">
             </form>
+
+              <a  type="button" class="rc-button rc-button-submit" href="/api/cas_check">统一认证登陆</a>
+
+
             <script>
                 $("#login-form").submit(function (e) {
                     e.preventDefault();
