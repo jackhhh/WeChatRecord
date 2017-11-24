@@ -138,6 +138,10 @@ def login(request):
 
 def logout(request):
     identity = session.get_identity(request)
+    if identity == 'student':
+        print 'logout success!'
+        session.del_session(request)
+        return HttpResponseRedirect('/api/cas_logout')
     if identity != 'none':
         print 'logout success!'
         session.del_session(request)
