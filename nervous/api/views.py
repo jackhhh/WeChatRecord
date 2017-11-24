@@ -10,6 +10,7 @@ from api.usereg_login import check as tsinghua_login
 from database import backend
 from wechat import session
 from multiprocessing import Process
+from django_cas_ng import views
 
 
 # Utils
@@ -144,6 +145,17 @@ def login(request):
         'error_message': u'用户名或密码错误！'
     })
 
+def cas_check(request):
+    if request.user.is_authenticated():
+        #get username
+        username=request.user.get_username()
+        #set identity to student
+        identity='student'
+        #add session
+        session.add_session(request, identity=identity, username=username)
+        return HttpResponseRedirect('/student')
+    else:
+        return HttpResponseRedirect('cas_login')
 
 @json_response_general_exception_decorator
 @json_response_validation_error_decorator
