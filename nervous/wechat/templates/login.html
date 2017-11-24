@@ -69,6 +69,36 @@
                 }
             });
         }
+
+        function form_get() {
+          $.ajax({
+              url: "{% url 'api/cas/check' %}",
+              data: data,
+              dataType: dataType,
+              success: function (data) {
+                  alert(data);
+                  alert("Data type: "+dataType);
+                  //  you can change to this
+
+                  
+                  // button.removeClass("disabled");
+                  // button.val("登录");
+                  // if (data.status === "ok") {
+                  //     window.location = '/' + data.identity;
+                  // } else {
+                  //     error_msg.html(data.error_message);
+                  // }
+              },
+              error: function (xhr, textStatus, errorThrown) {
+                alert(errorThrown);
+                  //
+                  // button.removeClass("disabled");
+                  // button.val("登录");
+                  // $(".error-msg").html("无法登录：" + textStatus + ": " + errorThrown);
+              }
+          });
+        }
+
     </script>
 </head>
 
@@ -103,10 +133,19 @@
                 <input id="signin-button" type="submit" class="rc-button rc-button-submit"
                        value="登录">
             </form>
+            <form id="get_info">
+              <input  type="button" class="rc-button rc-button-submit"
+                  value="test get form">
+            </form>
+
             <script>
                 $("#login-form").submit(function (e) {
                     e.preventDefault();
                     form_submit();
+                })
+                $("#get_info").click(function (e) {
+                  e.preventDefault();
+                  form_get();
                 })
             </script>
         </div>
