@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 import datetime
 import re
 import requests
@@ -7,19 +8,6 @@ import math
 import database.gsdata_utils
 import database.models
 from api import getdata
-
-
-def calculate_wci(r, r_max, z, z_max, n):
-    r_index = 0.4 * math.log(r + 1) + \
-              0.45 * math.log(float(r) / n + 1) + \
-              0.15 * math.log(r_max + 1)
-    z_index = 0.4 * math.log(10 * z + 1) + \
-              0.45 * math.log(10 * float(z) / n + 1) + \
-              0.15 * math.log(10 * z_max + 1)
-    total_index = 0.8 * r_index + 0.2 * z_index
-    wci = total_index ** 2 * 10
-    print 'calculate_wci:', r, r_max, z, z_max, n, '=>', wci
-    return wci
 
 
 def get_time_string_before_n_days(n):
@@ -43,44 +31,42 @@ def get_time_string_now():
 def add_items(dic):
     for temp in dic:
         temp['official_account_name'] = temp['name']
-        temp['description'] = temp['content']
-        temp['views'] = temp['readnum']
-        temp['likes'] = temp['likenum']
+        temp['description'] = temp['digest']
+        temp['views'] = temp['read_count']
+        temp['likes'] = temp['like_count']
         temp['avatar_url'] = temp['picurl']
         temp['update_time'] = get_time_string_now()
         database.gsdata_utils.add_article(temp)
 
-
+# 这个函数其实是添加文章 1个月的
 def update_official_account(account):
     print 'updating official account: %s' % account
 
     paras = {
-        'wx_name': account,
-        'datestart': get_time_string_before_month(),
-        'dateend': get_time_string_now()
+        'end_date': get_time_string_now(),
+        'page': 1,
+        'per-page': 50,
+        'start_date': get_time_string_before_month(),
+        'wx_name': account
     }
 
-    d = getdata.get_dict('wx/opensearchapi/content_list', paras)
+    check_eof_id = 'empty'
+    d = getdata.get_dict('/weixin/v1/articles', paras)
+    ind = d['data']
 
-    totnum = d['returnData']['total']
-    ind = (d['returnData'])['items']
-    add_items(ind)
-    totnum -= 10
-    cnt = 10
-    while totnum > 0:
-        paras['start'] = cnt
-        d = getdata.get_dict('wx/opensearchapi/content_list', paras)
-        d1 = (d['returnData'])['items']
-        add_items(d1)
-        totnum -= 10
-        cnt += 10
+    while ind[0]['id'] != check_eof_id:
+        check_eof_id = ind[0]['id']
+        add_items(ind)
+        paras['page'] += 1
+        d = getdata.get_dict('/weixin/v1/articles', paras)
+        ind = d['data']
 
-
+# 这个函数获得的wci是最新的 当前的
 def get_wci(account):
     try:
         paras = {'wx_name': account}
-        d = getdata.get_dict('wx/opensearchapi/nickname_order_now', paras)
-        return float(d['returnData']['items'][0]['wci'])
+        d = getdata.get_dict('/weixin/v1/users', paras)
+        return d['data'][0]['wci']
     except IndexError:
         print 'WCI fetching for %s fails, trying brute force...' % account
         url = 'http://www.gsdata.cn/query/wx?q=%s&search_field=2' % account
@@ -89,72 +75,58 @@ def get_wci(account):
         return float(g.group(1))
 
 
-def update_official_account_nums_before_n_days(account, n):
+def get_official_account_nums_before_n_days(account, n):
     day_string = get_time_string_before_n_days(n)
     paras = {
-        'wx_name': account,
-        'beginDate': day_string,
-        'endDate': day_string
+        'start_date': day_string,
+        'wx_name': account
     }
-    d = getdata.get_dict('wx/opensearchapi/nickname_order_total', paras)
-    res = d['returnData']
+    d = getdata.get_dict('/weixin/v1/users/rank-days', paras)
+    if d['data'] == []:
+        return False
+    res = d['data'][0]
+    return res
+
+# 这个函数虽然请求字段里有start_date 但是实际上只返回start_date当天的数据 所以可以视为请求第n天前的数据
+def update_official_account_nums_before_n_days(account, n):
+    res = get_official_account_nums_before_n_days(account, n)
+    
+    # Maybe gsdata hasn't got the data ...
+    if res == False:
+        return False
+
     dic = {
         'date': get_date_object_before_n_days(n),
-        'likes': res.get('likenum_total', 0),
-        'views': res.get('readnum_total', 0),
-        'articles': res.get('url_num_total', 0),
+        'likes': res.get('likenum_all', 0),
+        'views': res.get('readnum_all', 0),
+        'articles': res.get('url_num', 0),
+        'wci': res.get('wci', 0)
     }
-    # Maybe gsdata hasn't got the data ...
-    if dic['views'] == 0:
-        return False
 
     database.gsdata_utils.add_account_record(account, dic)
     return True
 
-
+# 这个函数是更新前1-9天的数据，循环调用第n天数据的那个函数。老接口不支持返回当天的wci，要自己算，所以被淘汰了
 def update_official_account_daily_nums(account):
-    account_instance = database.models.OfficialAccount.objects \
-        .get(wx_id=account)
     for i in xrange(1, 9):
-        date = get_date_object_before_n_days(i)
-        ret = update_official_account_nums_before_n_days(account, i)
-        if not ret:
-            continue
-        record = database.models.AccountRecord.objects \
-            .get(account=account_instance, date=date)
+        update_official_account_nums_before_n_days(account, i)
 
-        def tz_time_before_n_days(i):
-            date = get_date_object_before_n_days(i)
-            return database.gsdata_utils.tz_time_from_naive_time(
-                datetime.datetime(date.year, date.month, date.day)
-            )
-
-        end_time = tz_time_before_n_days(i - 1)
-        start_time = tz_time_before_n_days(i)
-        articles = database.models.Article.objects \
-            .filter(official_account_id=account_instance.id) \
-            .filter(posttime__lte=end_time) \
-            .filter(posttime__gte=start_time)
-        max_r, max_z, r, z = 0, 0, 0, 0
-        for article in articles:
-            max_r = max(max_r, article.views)
-            max_z = max(max_z, article.likes)
-            r = r + article.views
-            z = z + article.likes
-        record.wci = calculate_wci(r, max_r, z, max_z, articles.count())
-        record.save()
-
-
+# 这个函数老接口可以调用该公众号总共的阅读数和点赞数，新接口已经没有这个返回值了，所以这里的操作是求和7天的阅读数和点赞数，变量名和数据库里的键名没有改
 def update_official_account_nums(account):
-    paras = {'wx_name': account}
-    d = getdata.get_dict('wx/opensearchapi/nickname_order_total', paras)
-    res = d['returnData']
-    res_dic = {
-        'likes_total': res['likenum_total'],
-        'views_total': res['readnum_total'],
+    likes_total = 0
+    views_total = 0
+    for i in xrange(1, 7):
+        d = get_official_account_nums_before_n_days(account, i)
+        if d == False:
+            continue
+        likes_total += d['likenum_all']
+        views_total += d['readnum_all']
+    dic = {
+        'likes_total': likes_total,
+        'views_total': views_total,
         'wci': get_wci(account)
     }
-    database.gsdata_utils.update_account_nums(account, res_dic)
+    database.gsdata_utils.update_account_nums(account, dic)
 
 
 def update_all(account):

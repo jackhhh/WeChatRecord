@@ -27,7 +27,7 @@ def add_article(dic):
         )
     art = Article.objects.model()
     art.official_account_id = acc.id
-    naive_time = datetime.datetime.strptime(dic['posttime'], "%Y-%m-%d %H:%M:%S")
+    naive_time = datetime.datetime.strptime(dic['created_at'], "%Y-%m-%d %H:%M:%S")
     art.posttime = tz_time_from_naive_time(naive_time)
     for attr in ['title', 'description', 'avatar_url', 'url', 'likes', 'views']:
         setattr(art, attr, dic[attr])
@@ -47,7 +47,7 @@ def add_account_record(wx_id, dic):
         record = AccountRecord.objects.model()
     record.account = account
     record.date = date
-    for attr in ['likes', 'views', 'articles']:
+    for attr in ['likes', 'views', 'articles', 'wci']:
         setattr(record, attr, dic.get(attr, -1))
     record.save()
 
