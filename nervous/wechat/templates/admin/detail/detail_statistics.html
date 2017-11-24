@@ -36,7 +36,7 @@
                                                     data-json='{{ oa_chart_json }}'></object>
                                         </div>
                                         <div class="pull-right" style="font-size: 8px;">
-                                            数据来源：<a href="http://www.gsdata.cn/">新媒体指数</a>；无法获取到对应数据的日期不会在图表中显示。
+                                            数据来源：<a href="http://www.gsdata.cn/">清博大数据</a>；无法获取到对应数据的日期不会在图表中显示。
                                         </div>
                                     </div>
                                     <div id="article-chart" class="tab-pane fade">
@@ -50,7 +50,7 @@
                                                     data-json='{{ article_likes_chart_json }}'></object>
                                         </div>
                                         <div class="pull-right" style="font-size: 8px;">
-                                            数据来源：<a href="http://www.gsdata.cn/">新媒体指数</a>。
+                                            数据来源：<a href="http://www.gsdata.cn/">清博大数据</a>
                                         </div>
                                     </div>
                                     <div id="history-chart" class="tab-pane fade">
@@ -59,7 +59,7 @@
                                                     data-json='{{ history_chart_json }}'></object>
                                         </div>
                                         <div class="pull-right" style="font-size: 8px;">
-                                            数据来源：<a href="http://www.gsdata.cn/">新媒体指数</a>；图中每天的WCI为后台计算而非抓取得到，因此可能与实际值有偏差，仅供参考。
+                                            数据来源：<a href="http://www.gsdata.cn/">清博大数据</a>
                                         </div>
                                     </div>
                                 </div>
@@ -119,9 +119,9 @@
             </div>
             <div class="panel-body">
                 <div style="line-height: 160%;">
-                    <b>发布文章数：</b>{{ article_count }}<br/>
-                    <b>文章总阅读数：</b>{{ account|views_total }}<br/>
-                    <b>文章总点赞数：</b>{{ account|likes_total }}<br/>
+                    <b>发布文章总数：</b>{{ article_count }}<br/>
+                    <b>七日总阅读数：</b>{{ account|views_total }}<br/>
+                    <b>七日总点赞数：</b>{{ account|likes_total }}<br/>
                     <b>WCI：</b>{{ account|wci }}<br/>
                 </div>
             </div>

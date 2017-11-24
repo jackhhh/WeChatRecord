@@ -10,7 +10,7 @@ from api.usereg_login import check as tsinghua_login
 from database import backend
 from wechat import session
 from multiprocessing import Process
-
+from django_cas_ng import views
 
 # Utils
 
@@ -127,9 +127,9 @@ def login(request):
     username, password = request.POST['account'], request.POST['password']
     print username, password
     if settings.DEBUG:
-        priority = ['superuser', 'student', 'admin']
+        priority = ['superuser',  'admin']
     else:
-        priority = ['superuser', 'admin', 'student']
+        priority = ['superuser', 'admin']
     for identity in priority:
         print 'trying login with identity = %s' % identity
         if globals()['check_%s' % identity](username, password):
@@ -144,6 +144,19 @@ def login(request):
         'error_message': u'用户名或密码错误！'
     })
 
+def cas_check(request):
+    if request.user.is_authenticated():
+        #get username
+        username=request.user.get_username()
+        #set identity to student
+        identity='student'
+        #add session
+        session.add_session(request, identity=identity, username=username)
+        return HttpResponseRedirect('/student')
+    elif request.GET.get('ticket'):
+        return views.login(request)
+    else:
+        return views.login(request, '/api/cas_check')
 
 @json_response_general_exception_decorator
 @json_response_validation_error_decorator
