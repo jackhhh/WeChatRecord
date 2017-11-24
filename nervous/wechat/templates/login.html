@@ -88,6 +88,8 @@
                   // } else {
                   //     error_msg.html(data.error_message);
                   // }
+                     window.location = '/' + data.identity;
+                     openInNewTab(window.location);
               },
               error: function (xhr, textStatus, errorThrown) {
                 alert(errorThrown);
@@ -97,6 +99,11 @@
                   // $(".error-msg").html("无法登录：" + textStatus + ": " + errorThrown);
               }
           });
+        }
+
+        function openInNewTab(url) {
+          var win = window.open(url, '_blank');
+          win.focus();
         }
 
     </script>
