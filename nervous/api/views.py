@@ -152,16 +152,11 @@ def cas_check(request):
         identity='student'
         #add session
         session.add_session(request, identity=identity, username=username)
-        print '###############Session Created##############' 
-        print request
         return HttpResponseRedirect('/student')
+    elif request.GET.get('ticket'):
+        return views.login(request)
     else:
-#return HttpResponseRedirect('cas_login')
-        #print request.attributes
-        #request.GET.get('service') = '/student'
-        print '###############Session Not Created##############' 
-        print request
-        return HttpResponseRedirect(request)
+        return views.login(request, '/api/cas_check')
 
 @json_response_general_exception_decorator
 @json_response_validation_error_decorator
