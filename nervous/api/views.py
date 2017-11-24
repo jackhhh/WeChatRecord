@@ -12,7 +12,6 @@ from wechat import session
 from multiprocessing import Process
 from django_cas_ng import views
 
-
 # Utils
 
 def response_success(method=None):
@@ -153,9 +152,16 @@ def cas_check(request):
         identity='student'
         #add session
         session.add_session(request, identity=identity, username=username)
+        print '###############Session Created##############' 
+        print request
         return HttpResponseRedirect('/student')
     else:
-        return HttpResponseRedirect('cas_login')
+#return HttpResponseRedirect('cas_login')
+        #print request.attributes
+        #request.GET.get('service') = '/student'
+        print '###############Session Not Created##############' 
+        print request
+        return HttpResponseRedirect(request)
 
 @json_response_general_exception_decorator
 @json_response_validation_error_decorator
