@@ -1,3 +1,4 @@
+
 # A Nervous Project
 
 A website used to manage WeChat official accounts.
@@ -19,6 +20,8 @@ coverage
 django_nose
 
 requests
+
+django_cas_ng
 
 
 ## Baed on a TSU project
