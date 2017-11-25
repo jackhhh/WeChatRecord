@@ -31,7 +31,7 @@
 
             if (account === "") {
                 account_field.addClass("form-error");
-                error_msg.html("请输入学号");
+                error_msg.html("请输入用户名");
                 return;
             } else if (password === "") {
                 password_field.addClass("form-error");
@@ -90,23 +90,21 @@
         </div>
         <div class="card">
             <div class="banner">
-                <h2>请登录</h2>
+                <h2>申请者请使用<b>统一身份认证</b>登录</h2>
             </div>
 
             <form id="login-form">
                 {% csrf_token %}
                 <p></p>
-                <input id="username-field" name="account" type="text" placeholder="学号" class="">
+                <input id="username-field" name="account" type="text" placeholder="用户名" class="">
                 <input id="password-field" name="password_display" type="password" placeholder="密码" class="">
                 <input name="password" type="password" style="display: none;">
 
                 <div class="error-msg"></div>
-                <input id="signin-button" type="submit" class="rc-button rc-button-submit"
-                       value="登录">
+                <input id="signin-button" type="submit" class="rc-button rc-button-submit" value="登录">
             </form>
 
-              <a  type="button" class="rc-button rc-button-submit" href="/api/cas_check">统一认证登陆</a>
-
+            <input id="cas-button" class="rc-button rc-button-cas" value="统一身份认证登录" onclick="location='/api/cas_check'">
 
             <script>
                 $("#login-form").submit(function (e) {
