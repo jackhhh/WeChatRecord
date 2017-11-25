@@ -142,7 +142,7 @@ def logout(request):
         print 'logout success!'
         session.del_session(request)
         return HttpResponseRedirect('/api/cas_logout')
-    if identity != 'none':
+    elif identity != 'none':
         print 'logout success!'
         session.del_session(request)
     print 'no cookies & logout success!'
@@ -234,7 +234,7 @@ def student_modify_applications(request, id):
     student = backend.get_student_by_id(username)
     app = backend.get_application_by_id(id)
     print 'in student_modify_applications..'
-    print 'real_name is:', student.real_name
+    #print 'real_name is:', student.real_name
     return render_ajax(request, 'student/modify_applications.html', {
         'student': student,
         'student_id': username,
@@ -248,7 +248,7 @@ def student_modify_applications(request, id):
 def student_fill_info(request):
     return render(request, 'student/info.html', {
         'type': 'fill',
-        'username': '未登录'
+        'username': '未填写'
     })
 
 
