@@ -22,6 +22,14 @@ requests
 
 django_cas_ng
 
+## Running Commands
+
+```shell
+cd /nervous
+python manage.py syncdb
+python manage.py runserver 0.0.0.0:80
+```
+
 ## Based on a TSU project
 
 Team members:
