@@ -1,13 +1,12 @@
-
 # A Nervous Project
 
 A website used to manage WeChat official accounts.
 
-## Codes edited by:
+## Codes edited by
 
 [Jack.H](https://github.com/jackhhh) & [dakehero](https://github.com/dakehero) & [DastanSE](https://github.com/DastanSE)
 
-# Project Environment:
+# Project Environment
 
 Python 2.7.10
 
@@ -23,8 +22,8 @@ requests
 
 django_cas_ng
 
+## Based on a TSU project
 
-## Baed on a TSU project
 Team members:
 
 黄豪硕 胡泽聪 韦毅龙 杨天龙 
