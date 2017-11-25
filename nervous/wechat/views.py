@@ -269,7 +269,7 @@ def student_change_info(request):
 def student_badge_pending_count(request):
     username = session.get_username(request)
     applications = backend.get_applications_by_user(username)
-    pending_count = applications.filter(status__exact='pending').count()
+    pending_count = applications.count()
     return HttpResponse(pending_count)
 
 
